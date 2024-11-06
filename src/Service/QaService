@@ -1,0 +1,27 @@
+<?php
+
+
+// src/Service/QaService.php
+
+namespace App\Service;
+
+use Rubix\ML\Persisters\Filesystem;
+use Rubix\ML\Pipeline;
+
+class QaService
+{
+    private Pipeline $pipeline;
+
+    public function __construct(string $modelPath)
+    {
+        $persister = new Filesystem($modelPath);
+        $this->pipeline = $persister->load();
+    }
+
+    public function getAnswer(string $question): ?string
+    {
+        $prediction = $this->pipeline->predict([$question]);
+
+        return $prediction[0] ?? null;
+    }
+}
