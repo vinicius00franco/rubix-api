@@ -1,6 +1,5 @@
 <?php
 
-
 // src/Service/QaService.php
 
 namespace App\Service;
