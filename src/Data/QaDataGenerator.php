@@ -1,32 +1,36 @@
 <?php
 
-// src/Data/QaDataGenerator.php
-
 namespace App\Data;
+
+use App\Entity\QaData;
+use App\Repository\QaDataRepository;
 
 class QaDataGenerator
 {
-    public static function getSamples(): array
+    private QaDataRepository $qaDataRepository;
+
+    public function __construct(QaDataRepository $qaDataRepository)
     {
-        return [
-            ['Como está o tempo hoje?'],
-            ['Quais são os sintomas da gripe?'],
-            ['Como posso melhorar minha alimentação?'],
-            ['O que é hipertensão?'],
-            ['Como praticar exercícios em casa?'],
-            // Adicione mais perguntas conforme necessário
-        ];
+        $this->qaDataRepository = $qaDataRepository;
     }
 
-    public static function getLabels(): array
+    /**
+     * Retorna as amostras e labels para treinamento do modelo.
+     *
+     * @return array [samples, labels]
+     */
+    public function getSamplesAndLabels(): array
     {
-        return [
-            'A resposta sobre o tempo.',
-            'A resposta sobre sintomas da gripe.',
-            'A resposta sobre melhoria da alimentação.',
-            'A resposta sobre hipertensão.',
-            'A resposta sobre exercícios em casa.',
-            // Respostas correspondentes
-        ];
+        $qaDataList = $this->qaDataRepository->findAll();
+
+        $samples = [];
+        $labels = [];
+
+        foreach ($qaDataList as $data) {
+            $samples[] = $data->getQuestion();
+            $labels[] = $data->getAnswer();
+        }
+
+        return [$samples, $labels];
     }
 }

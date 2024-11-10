@@ -1,7 +1,5 @@
 <?php
 
-// src/Controller/HealthController.php
-
 namespace App\Controller;
 
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -30,11 +28,31 @@ class HealthController extends AbstractController
 
         // Definir restrições de validação
         $constraints = new Assert\Collection([
-            'idade' => [new Assert\NotBlank(), new Assert\Type('integer'), new Assert\Range(['min' => 0, 'max' => 120])],
-            'sexo' => [new Assert\NotBlank(), new Assert\Choice(['choices' => ['Masculino', 'Feminino']])],
-            'peso' => [new Assert\NotBlank(), new Assert\Type(['type' => 'numeric', 'message' => 'O peso deve ser um número.'])],
-            'habito1' => [new Assert\Optional([new Assert\Type('integer'), new Assert\Choice([0, 1])])],
-            'habito2' => [new Assert\Optional([new Assert\Type('integer'), new Assert\Choice([0, 1])])],
+            'idade' => [
+                new Assert\NotBlank(),
+                new Assert\Type(['type' => 'integer', 'message' => 'A idade deve ser um inteiro.']),
+                new Assert\Range(['min' => 0, 'max' => 120])
+            ],
+            'sexo' => [
+                new Assert\NotBlank(),
+                new Assert\Choice(['choices' => ['Masculino', 'Feminino'], 'message' => 'Escolha válida para sexo.'])
+            ],
+            'peso' => [
+                new Assert\NotBlank(),
+                new Assert\Type(['type' => 'numeric', 'message' => 'O peso deve ser um número.'])
+            ],
+            'habito1' => [
+                new Assert\Optional([
+                    new Assert\Type(['type' => 'integer', 'message' => 'habito1 deve ser 0 ou 1.']),
+                    new Assert\Choice(['choices' => [0, 1], 'message' => 'habito1 deve ser 0 ou 1.'])
+                ])
+            ],
+            'habito2' => [
+                new Assert\Optional([
+                    new Assert\Type(['type' => 'integer', 'message' => 'habito2 deve ser 0 ou 1.']),
+                    new Assert\Choice(['choices' => [0, 1], 'message' => 'habito2 deve ser 0 ou 1.'])
+                ])
+            ],
         ]);
 
         $violations = $this->validator->validate($data, $constraints);

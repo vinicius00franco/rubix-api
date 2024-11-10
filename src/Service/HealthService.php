@@ -1,34 +1,29 @@
 <?php
 
-// src/Service/HealthService.php
-
 namespace App\Service;
 
+use Rubix\ML\Pipeline;
 use Rubix\ML\Persisters\Filesystem;
-use Rubix\ML\Classifiers\RandomForest;
-use Rubix\ML\Transformers\OneHotEncoder;
 
 class HealthService
 {
-    private RandomForest $estimator;
-    private OneHotEncoder $encoder;
+    private Pipeline $pipeline;
 
     public function __construct(string $modelPath)
     {
-        // Carregar o modelo
         $persister = new Filesystem($modelPath);
-        $this->estimator = $persister->load();
-
-        // Configurar o codificador (mesmo usado no treinamento)
-        $this->encoder = new OneHotEncoder(['sexo']);
+        $this->pipeline = $persister->load();
     }
 
+    /**
+     * Avalia a saúde do usuário com base nos dados fornecidos.
+     *
+     * @param array $userData [idade, sexo, peso, habito1, habito2]
+     * @return string|null
+     */
     public function evaluate(array $userData): ?string
     {
-        // userData deve estar no formato: [idade, sexo, peso, hábito1, hábito2]
-        $this->encoder->transform($userData);
-
-        $prediction = $this->estimator->predict([$userData]);
+        $prediction = $this->pipeline->predict([$userData]);
 
         return $prediction[0] ?? null;
     }

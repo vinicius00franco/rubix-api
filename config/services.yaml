@@ -1,5 +1,5 @@
 parameters:
-  model_path: "%kernel.project_dir%/models-ml" # Path where your model files are stored
+  model_path: "%kernel.project_dir%/models-ml" # Caminho onde seus arquivos de modelo estão armazenados
 
 services:
   _defaults:
@@ -13,11 +13,11 @@ services:
       - "../src/Entity/"
       - "../src/Kernel.php"
 
-  # Explicitly configure HealthService and QaService to use the model path
-  App\Service\HealthService:
+  # Configure automaticamente os serviços que precisam do model_path
+  App\Service\:
+    resource: "../src/Service"
     arguments:
       $modelPath: "%model_path%"
 
-  App\Service\QaService:
-    arguments:
-      $modelPath: "%model_path%"
+  App\Controller\Connection\DatabaseConnectionController:
+    tags: ["controller.service_arguments"]

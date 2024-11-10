@@ -1,48 +1,42 @@
 <?php
 
-// src/Command/TrainQaModelCommand.php
-
 namespace App\Command;
 
-use Rubix\ML\Classifiers\MultinomialNB;
-use Rubix\ML\FeatureExtraction\TokenCountVectorizer;
-use Rubix\ML\FeatureExtraction\TfIdfTransformer;
 use Rubix\ML\Pipeline;
 use Rubix\ML\Persisters\Filesystem;
+use Rubix\ML\Classifiers\MultinomialNB;
+use Rubix\ML\Tokenizers\WhitespaceTokenizer;
+use Rubix\ML\FeatureExtraction\TokenCountVectorizer;
+use Rubix\ML\FeatureExtraction\TfIdfTransformer;
+use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use App\Data\QaDataGenerator;
 
+#[AsCommand(
+    name: 'app:train-qa-model',
+    description: 'Treina e salva o modelo de Q&A.'
+)]
 class TrainQaModelCommand extends Command
 {
-    protected static $defaultName = 'app:train-qa-model';
-    protected static $defaultDescription = 'Treina e salva o modelo de Q&A.';
+    private QaDataGenerator $qaDataGenerator;
 
-    protected function configure()
+    public function __construct(QaDataGenerator $qaDataGenerator)
     {
-        // Descrição e ajuda
+        parent::__construct();
+        $this->qaDataGenerator = $qaDataGenerator;
     }
 
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
-        // Obter dados
-        $samples = QaDataGenerator::getSamples();
-        $labels = QaDataGenerator::getLabels();
+        [$samples, $labels] = $this->qaDataGenerator->getSamplesAndLabels();
 
         // Pipeline de pré-processamento
-        $vectorizer = new TokenCountVectorizer(new \Rubix\ML\Tokenizers\WhitespaceTokenizer());
-        $transformer = new TfIdfTransformer();
-
-        // Modelo
-        $estimator = new MultinomialNB();
-
-        // Pipeline completo
         $pipeline = new Pipeline([
-            $vectorizer,
-            $transformer,
-            $estimator
-        ]);
+            new TokenCountVectorizer(new WhitespaceTokenizer()),
+            new TfIdfTransformer(),
+        ], new MultinomialNB());
 
         // Treinamento
         $pipeline->train($samples, $labels);
