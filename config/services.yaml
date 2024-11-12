@@ -13,11 +13,9 @@ services:
       - "../src/Entity/"
       - "../src/Kernel.php"
 
-  # Configure automaticamente os serviços que precisam do model_path
-  App\Service\:
-    resource: "../src/Service"
-    arguments:
-      $modelPath: "%model_path%"
-
   App\Controller\Connection\DatabaseConnectionController:
     tags: ["controller.service_arguments"]
+
+  App\Service\QaService:
+    arguments:
+      $modelPath: "%kernel.project_dir%/models/latest_model.rbx" # Ajuste o caminho conforme necessário

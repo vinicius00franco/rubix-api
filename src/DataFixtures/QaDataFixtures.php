@@ -387,12 +387,15 @@ class QaDataFixtures extends Fixture implements FixtureGroupInterface
             ],
         ];
 
-        foreach ($qaItems as $item) {
+        foreach ($qaItems as $index => $item) {
             $qaData = new QaData();
             $qaData->setQuestion($item['question']);
             $qaData->setAnswer($item['answer']);
 
             $manager->persist($qaData);
+
+            // Adicione uma referência para cada QaData criada
+            $this->addReference('qa_' . $index, $qaData);
         }
 
         $manager->flush();

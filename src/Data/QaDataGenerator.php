@@ -2,7 +2,7 @@
 
 namespace App\Data;
 
-use App\Entity\QaData;
+
 use App\Repository\QaDataRepository;
 
 class QaDataGenerator

@@ -1981,16 +1981,16 @@
         },
         {
             "name": "rubix/ml",
-            "version": "2.5.1",
+            "version": "2.5.2",
             "source": {
                 "type": "git",
                 "url": "https://github.com/RubixML/ML.git",
-                "reference": "85d7d4be9f3f75ec4fea24a4213442e5c14d3853"
+                "reference": "59782a24bd09f0faa00e7df335fd58ca288d1eab"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/RubixML/ML/zipball/85d7d4be9f3f75ec4fea24a4213442e5c14d3853",
-                "reference": "85d7d4be9f3f75ec4fea24a4213442e5c14d3853",
+                "url": "https://api.github.com/repos/RubixML/ML/zipball/59782a24bd09f0faa00e7df335fd58ca288d1eab",
+                "reference": "59782a24bd09f0faa00e7df335fd58ca288d1eab",
                 "shasum": ""
             },
             "require": {
@@ -2138,7 +2138,7 @@
                     "type": "github"
                 }
             ],
-            "time": "2024-08-31T22:53:34+00:00"
+            "time": "2024-11-09T23:02:27+00:00"
         },
         {
             "name": "rubix/tensor",

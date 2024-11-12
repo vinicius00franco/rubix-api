@@ -20,14 +20,15 @@ final class Version20241110033421 extends AbstractMigration
     public function up(Schema $schema): void
     {
         // this up() migration is auto-generated, please modify it to your needs
-        $this->addSql('CREATE TABLE health_data (id INT AUTO_INCREMENT NOT NULL, idade INT NOT NULL, sexo VARCHAR(20) NOT NULL, peso DOUBLE PRECISION NOT NULL, habito1 TINYINT(1) NOT NULL, habito2 TINYINT(1) NOT NULL, label VARCHAR(50) NOT NULL, PRIMARY KEY(id)) DEFAULT CHARACTER SET utf8mb4 COLLATE `utf8mb4_unicode_ci`');
-        $this->addSql('CREATE TABLE qa_data (id INT AUTO_INCREMENT NOT NULL, question LONGTEXT NOT NULL, answer LONGTEXT NOT NULL, PRIMARY KEY(id)) DEFAULT CHARACTER SET utf8mb4 COLLATE `utf8mb4_unicode_ci`');
+        $this->addSql('CREATE TABLE IF NOT EXISTS health_data (id INT AUTO_INCREMENT NOT NULL, PRIMARY KEY(id))');
+        $this->addSql('CREATE TABLE IF NOT EXISTS qa_data (id INT AUTO_INCREMENT NOT NULL, PRIMARY KEY(id))');
+
     }
 
     public function down(Schema $schema): void
     {
         // this down() migration is auto-generated, please modify it to your needs
-        $this->addSql('DROP TABLE health_data');
-        $this->addSql('DROP TABLE qa_data');
+        $this->addSql('DROP TABLE IF NOT EXISTS health_data');
+        $this->addSql('DROP TABLE IF NOT EXISTS qa_data');
     }
 }

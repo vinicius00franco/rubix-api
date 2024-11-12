@@ -5,6 +5,8 @@ namespace App\Entity;
 use App\Repository\HealthDataRepository;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Validator\Constraints as Assert;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 
 #[ORM\Entity(repositoryClass: HealthDataRepository::class)]
 #[ORM\Table(name: 'health_data')]
@@ -39,6 +41,42 @@ class HealthData
     #[ORM\Column(type: 'string', length: 50)]
     #[Assert\NotBlank]
     private string $label;
+
+    #[ORM\OneToMany(mappedBy: 'healthData', targetEntity: PatientQaResponse::class)]
+    private Collection $qaResponses;
+
+    public function __construct()
+    {
+        $this->qaResponses = new ArrayCollection();
+    }
+
+    public function getQaResponses(): Collection
+    {
+        return $this->qaResponses;
+    }
+
+    public function addQaResponse(PatientQaResponse $qaResponse): self
+    {
+        if (!$this->qaResponses->contains($qaResponse)) {
+            $this->qaResponses[] = $qaResponse;
+            $qaResponse->setHealthData($this);
+        }
+
+        return $this;
+    }
+
+    public function removeQaResponse(PatientQaResponse $qaResponse): self
+    {
+        if ($this->qaResponses->removeElement($qaResponse)) {
+            // Set the owning side to null (unless already changed)
+            if ($qaResponse->getHealthData() === $this) {
+                $qaResponse->setHealthData(null);
+            }
+        }
+
+        return $this;
+    }
+
 
     // Getters e Setters...
 

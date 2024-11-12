@@ -2,43 +2,57 @@
 
 namespace App\Data;
 
-use App\Entity\HealthData;
 use App\Repository\HealthDataRepository;
+use App\Repository\QaDataRepository;
 
 class HealthDataGenerator
 {
-
+    private $healthDataRepository;
+    private $qaDataRepository;
 
     public function __construct(
-        private HealthDataRepository $healthDataRepository
-        )
-    {
+        HealthDataRepository $healthDataRepository,
+        QaDataRepository $qaDataRepository
+    ) {
         $this->healthDataRepository = $healthDataRepository;
+        $this->qaDataRepository = $qaDataRepository;
     }
 
-    /**
-     * Retorna as features e labels para treinamento do modelo.
-     *
-     * @return array [features, labels]
-     */
     public function getFeaturesAndLabels(): array
     {
-        $healthDataList = $this->healthDataRepository->findAllHealthData();
+        // Obter todos os registros de saúde
+        $healthRecords = $this->healthDataRepository->findAll();
 
-        //dd($healthDataList);
+        // Obter todas as perguntas
+        $qaItems = $this->qaDataRepository->findAll();
+
+        // Preparar as perguntas como colunas de features
+        $questionIds = [];
+        foreach ($qaItems as $qa) {
+            $questionIds[] = $qa->getId();
+        }
 
         $features = [];
         $labels = [];
 
-        foreach ($healthDataList as $data) {
-            $features[] = [
-                $data->getIdade(),
-                $data->getSexo(),
-                $data->getPeso(),
-                $data->getHabito1() ? 1 : 0,
-                $data->getHabito2() ? 1 : 0,
+        foreach ($healthRecords as $record) {
+            $feature = [
+                'idade' => $record->getIdade(),
+                'sexo' => $record->getSexo(),
+                'peso' => $record->getPeso(),
+                'habito1' => $record->getHabito1(),
+                'habito2' => $record->getHabito2(),
+                // Adicione outras features estruturadas conforme necessário
             ];
-            $labels[] = $data->getLabel();
+
+            // Obter as respostas do paciente às perguntas
+            foreach ($record->getQaResponses() as $qaResponse) {
+                $qid = $qaResponse->getQaData()->getId(); // ID da pergunta
+                $feature["qa_{$qid}"] = $qaResponse->getResponse();
+            }
+
+            $features[] = $feature;
+            $labels[] = $record->getLabel();
         }
 
         return [$features, $labels];
